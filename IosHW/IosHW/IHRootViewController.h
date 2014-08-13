@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface IHRootViewController : UIViewController
+@interface IHRootViewController : UIViewController <UIScrollViewDelegate>{
+    CGRect fullScreen;
+}
+
+@property (retain, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (strong, nonatomic) UIPageControl *pageControl;
+
 
 @end

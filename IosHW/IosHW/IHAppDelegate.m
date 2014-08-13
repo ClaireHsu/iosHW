@@ -7,6 +7,7 @@
 //
 
 #import "IHAppDelegate.h"
+#import "IHRootViewController.h"
 
 @implementation IHAppDelegate
 
@@ -15,6 +16,11 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
+    
+    IHRootViewController *rootViewController = [[IHRootViewController alloc]
+                                                initWithNibName:@"IHRootViewController"
+                                                bundle:nil];
+    self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
     return YES;
 }

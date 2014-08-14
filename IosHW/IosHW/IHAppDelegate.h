@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "IHDataOperator.h"
 
 @interface IHAppDelegate : UIResponder <UIApplicationDelegate>
 

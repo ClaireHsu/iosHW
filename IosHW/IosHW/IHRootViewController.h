@@ -10,6 +10,9 @@
 
 @interface IHRootViewController : UIViewController <UIScrollViewDelegate>{
     CGRect fullScreen;
+    NSDictionary *getDataDic;
+    NSDictionary *itemsDic;
+    int itemNums;
 }
 
 @property (retain, nonatomic) IBOutlet UIScrollView *scrollView;

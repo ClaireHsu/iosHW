@@ -20,6 +20,9 @@
     IHRootViewController *rootViewController = [[IHRootViewController alloc]
                                                 initWithNibName:@"IHRootViewController"
                                                 bundle:nil];
+    //UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:rootViewController];
+    
+    
     self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
     return YES;

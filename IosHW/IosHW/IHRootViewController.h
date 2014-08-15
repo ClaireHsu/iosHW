@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface IHRootViewController : UIViewController <UIScrollViewDelegate>{
+
+@interface IHRootViewController : UIViewController <UIScrollViewDelegate,UITextViewDelegate>{
     CGRect fullScreen;
     NSDictionary *getDataDic;
     NSDictionary *itemsDic;
@@ -17,6 +18,8 @@
 
 @property (retain, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) UIPageControl *pageControl;
+@property (strong, nonatomic) UITextView *textView;
+@property (strong, nonatomic) UIImageView *imgView;
 
 
 @end

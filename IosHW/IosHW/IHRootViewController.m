@@ -62,33 +62,50 @@
     int imgViewHeight = 200;
     for (int i =0; i<itemNums; i++) {
         itemsDic = [itemsArr objectAtIndex:i];
-        UIImageView *imgView = [[UIImageView alloc]
-                                initWithFrame:CGRectMake(i*fullScreen.size.width, 0, fullScreen.size.width, imgViewHeight)];
+        self.imgView = [[UIImageView alloc]
+                                initWithFrame:CGRectMake(i*fullScreen.size.width, 20, fullScreen.size.width, imgViewHeight)];
         //imgView.image = [UIImage imageNamed:@"asset@2x.png"];
-        imgView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[itemsDic objectForKey:@"image_url"]]]];
-        imgView.contentMode = UIViewContentModeScaleAspectFit;
-        [self.scrollView addSubview:imgView];
+        NSString *imgUrlStr = [itemsDic objectForKey:@"image_url"];
+        self.imgView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imgUrlStr]]];
+        self.imgView.contentMode = UIViewContentModeScaleAspectFit;
+        
+        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self.scrollView action:@selector(clickImgView:)];
+        [self.imgView addGestureRecognizer:tapRecognizer];
+        
+        [self.scrollView addSubview:self.imgView];
         
         
         
-        UITextView *textView = [[UITextView alloc]initWithFrame:CGRectMake(i*fullScreen.size.width, imgViewHeight, fullScreen.size.width, fullScreen.size.height-imgViewHeight-38)];
-        textView.dataDetectorTypes = UIDataDetectorTypeAll;
-        textView.text = [itemsDic objectForKey:@"description"];
-        textView.backgroundColor = [UIColor whiteColor];
-        textView.editable = NO;
-        textView.scrollEnabled = YES;
+        self.textView = [[UITextView alloc]initWithFrame:CGRectMake(i*fullScreen.size.width, imgViewHeight+20, fullScreen.size.width, fullScreen.size.height-imgViewHeight-38)];
+        self.textView.dataDetectorTypes = UIDataDetectorTypeAll;
+        self.textView.text = [itemsDic objectForKey:@"description"];
+        self.textView.backgroundColor = [UIColor whiteColor];
+        self.textView.editable = NO;
+        self.textView.scrollEnabled = YES;
         //textView.selectable = NO;
         
-
-        [self.scrollView addSubview:textView];
+        UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeGesture:)];
+        [self.scrollView addGestureRecognizer:swipeRecognizer];
+        
+        
+        
+        [self.scrollView addSubview:self.textView];
     }
-    
-    
-
-    
-    
-    
+  
 }
+
+#pragma mark - Gresure methods
+-(void)clickImgView:(UITapGestureRecognizer *)gesture{
+    NSLog(@"img clicked!");
+}
+
+
+-(void)swipeGesture:(UISwipeGestureRecognizer *)gesture{
+    self.textView.selectable = NO;
+}
+
+
+
 
 #pragma mark - UIScrollView delegate
 -(void) scrollViewDidScroll:(UIScrollView *)scrollView{

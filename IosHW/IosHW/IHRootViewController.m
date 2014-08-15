@@ -45,8 +45,9 @@
     
     fullScreen = [[UIScreen mainScreen] bounds];
     self.scrollView = [[UIScrollView alloc]initWithFrame:fullScreen];
-    self.scrollView.backgroundColor = [UIColor greenColor];
+    self.scrollView.backgroundColor = [UIColor whiteColor];
     self.scrollView.delegate = self;
+    self.scrollView.showsHorizontalScrollIndicator = NO;
     [self.scrollView setPagingEnabled:YES];
     self.scrollView.contentSize = CGSizeMake(fullScreen.size.width*itemNums, fullScreen.size.height);
     [self.view addSubview:self.scrollView];
@@ -58,19 +59,27 @@
     self.pageControl.currentPageIndicatorTintColor = [UIColor redColor];
     [self.view addSubview:self.pageControl];
     
-    
+    int imgViewHeight = 200;
     for (int i =0; i<itemNums; i++) {
         itemsDic = [itemsArr objectAtIndex:i];
         UIImageView *imgView = [[UIImageView alloc]
-                                initWithFrame:CGRectMake(i*fullScreen.size.width, 0, fullScreen.size.width, 200)];
-        imgView.image = [UIImage imageNamed:@"asset@2x.png"];
+                                initWithFrame:CGRectMake(i*fullScreen.size.width, 0, fullScreen.size.width, imgViewHeight)];
+        //imgView.image = [UIImage imageNamed:@"asset@2x.png"];
+        imgView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[itemsDic objectForKey:@"image_url"]]]];
+        imgView.contentMode = UIViewContentModeScaleAspectFit;
         [self.scrollView addSubview:imgView];
         
         
-        UITextView *textView = [[UITextView alloc]initWithFrame:CGRectMake(i*fullScreen.size.width, 200, fullScreen.size.width, fullScreen.size.height-200)];
+        
+        UITextView *textView = [[UITextView alloc]initWithFrame:CGRectMake(i*fullScreen.size.width, imgViewHeight, fullScreen.size.width, fullScreen.size.height-imgViewHeight-38)];
+        textView.dataDetectorTypes = UIDataDetectorTypeAll;
         textView.text = [itemsDic objectForKey:@"description"];
-        textView.backgroundColor = [UIColor blueColor];
+        textView.backgroundColor = [UIColor whiteColor];
         textView.editable = NO;
+        textView.scrollEnabled = YES;
+        //textView.selectable = NO;
+        
+
         [self.scrollView addSubview:textView];
     }
     

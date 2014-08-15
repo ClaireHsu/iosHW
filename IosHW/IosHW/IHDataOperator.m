@@ -12,11 +12,11 @@
 
 
 +(NSDictionary *)getDicFromURL:(NSString *)jsonURL{
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:jsonURL]];
-    NSData *response = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-    
     NSError *jsonError = nil;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:jsonURL]];
+    NSData *response = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:&jsonError];
+    
+    
     NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:response options:0 error:&jsonError];
 
     return jsonDic;

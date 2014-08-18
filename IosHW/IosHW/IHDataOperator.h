@@ -8,7 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface IHDataOperator : NSObject
+
+@interface IHDataOperator : NSObject{
+    
+}
 
 
 

@@ -13,6 +13,8 @@
     CGRect fullScreen;
     NSDictionary *getDataDic;
     NSDictionary *itemsDic;
+    UIActivityIndicatorView *indicatorView;
+    NSDictionary *jsonDic;
     int itemNums;
 }
 
@@ -20,6 +22,9 @@
 @property (strong, nonatomic) UIPageControl *pageControl;
 @property (strong, nonatomic) UITextView *textView;
 @property (strong, nonatomic) UIImageView *imgView;
+
+-(void)updateUI:(int)dataCount;
+
 
 
 @end

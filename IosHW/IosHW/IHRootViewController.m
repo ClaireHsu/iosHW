@@ -52,18 +52,15 @@
     [self.view addSubview:indicatorView];
     
     
-    UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeGesture:)];
-    [self.scrollView addGestureRecognizer:swipeRecognizer];
-    
     //Async
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:JSON_URL]];
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        getDataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-       
+        jsonDataAll = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        
         dispatch_async(dispatch_get_main_queue(),^{
-            [self updateUI:[getDataDic count]];
-          
+            [self updateUI:[jsonDataAll count]];
+            
         });
         
         
@@ -78,10 +75,10 @@
 -(void)updateUI: (int)dataCount{
     NSLog(@"dic nums:%d",dataCount);
     //self.scrollView.backgroundColor = [UIColor whiteColor];
+    [indicatorView removeFromSuperview];
     
     
-    
-    NSArray *itemsArr = [getDataDic objectForKey:@"livebricks"];
+    NSArray *itemsArr = [jsonDataAll objectForKey:@"livebricks"];
     //NSLog(@"items:%@",[itemsArr description]);
     itemNums = [itemsArr count];
     //    for (itemsDic in itemsArr) {
@@ -102,57 +99,100 @@
     int imgViewHeight = 200;
     for (int i =0; i<itemNums; i++) {
         itemsDic = [itemsArr objectAtIndex:i];
-        self.imgView = [[UIImageView alloc]
+        UIImageView *imgView = [[UIImageView alloc]
                         initWithFrame:CGRectMake(i*fullScreen.size.width, 20, fullScreen.size.width, imgViewHeight)];
         //imgView.image = [UIImage imageNamed:@"asset@2x.png"];
-        self.imgView.backgroundColor = [UIColor grayColor];
+        imgView.backgroundColor = [UIColor grayColor];
+        
         
         NSString *imgUrlStr = [itemsDic objectForKey:@"image_url"];
         
-        //Download img file
+        //Set default img
+        imgView.image = [UIImage imageNamed:@"asset@2x.png"];
+        imgView.contentMode = UIViewContentModeScaleAspectFit;
+        imgView.backgroundColor = [UIColor whiteColor];
+        [self.scrollView addSubview:imgView];
+
+        
+        //Check img file in Cache
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *libDirectory = [paths objectAtIndex:0];
+        NSString *cachesDirectory = [paths objectAtIndex:0];
         NSString *imgFilePath = [itemsDic objectForKey:@"image_filepath"];
-        NSString *catheImgPath = [libDirectory stringByAppendingPathComponent:imgFilePath];
-        NSData * imgData;
+        NSString *catheImgPath = [cachesDirectory stringByAppendingPathComponent:imgFilePath];
+        
         if (![[NSFileManager defaultManager]fileExistsAtPath:catheImgPath]) {
-            imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgUrlStr]];
-            [imgData writeToFile:catheImgPath atomically:YES];
+            
+            //Download img file __Async
+            
+            [self downloadImgFromURL:[NSURL URLWithString:imgUrlStr] cacheImgPath:catheImgPath compeledBlock:^(BOOL successed, UIImage *image) {
+                if (successed) {
+                    NSLog(@"img_NO.%d",i);
+                    
+                    dispatch_async(dispatch_get_main_queue(),^{
+                        
+                        imgView.image = image;
+                        
+                    });
+                   
+                    
+                }
+            }];
+            
         }else{
+            
             imgData = [NSData dataWithContentsOfFile:catheImgPath];
+            imgView.image = [UIImage imageWithData:imgData];
+            
         }
         
-        //self.imgView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imgUrlStr]]];
-        self.imgView.image = [UIImage imageWithData:imgData];
-        self.imgView.contentMode = UIViewContentModeScaleAspectFit;
+  
         
-        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self.scrollView action:@selector(clickImgView:)];
-        [self.imgView addGestureRecognizer:tapRecognizer];
-        
-        [indicatorView removeFromSuperview];
-        self.imgView.backgroundColor = [UIColor whiteColor];
-        [self.scrollView addSubview:self.imgView];
+        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickImgView:)];
+        [imgView addGestureRecognizer:tapRecognizer];
         
         
         
-        self.textView = [[UITextView alloc]initWithFrame:CGRectMake(i*fullScreen.size.width, imgViewHeight+20, fullScreen.size.width, fullScreen.size.height-imgViewHeight-38)];
-        self.textView.backgroundColor = [UIColor grayColor];
-        self.textView.dataDetectorTypes = UIDataDetectorTypeAll;
-        self.textView.text = [itemsDic objectForKey:@"description"];
-        self.textView.backgroundColor = [UIColor whiteColor];
-        self.textView.editable = NO;
-        self.textView.scrollEnabled = YES;
+        
+        
+        
+        UITextView *textView = [[UITextView alloc]initWithFrame:CGRectMake(i*fullScreen.size.width, imgViewHeight+20, fullScreen.size.width, fullScreen.size.height-imgViewHeight-38)];
+        textView.backgroundColor = [UIColor grayColor];
+        textView.dataDetectorTypes = UIDataDetectorTypeAll;
+        textView.text = [itemsDic objectForKey:@"description"];
+        textView.backgroundColor = [UIColor whiteColor];
+        textView.editable = NO;
+        textView.scrollEnabled = YES;
         //textView.selectable = NO;
         
-        
-        
-        
-        
-        [self.scrollView addSubview:self.textView];
+
+        [self.scrollView addSubview:textView];
     }
 
     
    
+}
+
+-(void)downloadImgFromURL:(NSURL *)url cacheImgPath:(NSString *)cacheImgPath compeledBlock:(void (^) (BOOL successed,UIImage *image))compeledBlock{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               if (!connectionError) {
+                                   imgData = [NSData dataWithContentsOfURL:url];
+                                   [imgData writeToFile:cacheImgPath atomically:YES];
+                                   
+                                   
+                                       
+                                       UIImage *img = [[UIImage alloc]initWithData:imgData];
+                                       compeledBlock(YES,img);
+                                   
+                        
+                                   
+                               }else{
+                                   compeledBlock(NO,nil);
+                               }
+                           }];
+
 }
 
 #pragma mark - Gresure methods
@@ -161,15 +201,12 @@
 }
 
 
--(void)swipeGesture:(UISwipeGestureRecognizer *)gesture{
-    self.textView.selectable = NO;
-}
-
-
 
 
 #pragma mark - UIScrollView delegate
 -(void) scrollViewDidScroll:(UIScrollView *)scrollView{
+    //textView.selectable = NO;
+    
     CGFloat pageWidth = self.scrollView.frame.size.width;
     int page = floor((self.scrollView.contentOffset.x-pageWidth/2)/pageWidth)+1;
     //NSLog(@"page number:%d",page);

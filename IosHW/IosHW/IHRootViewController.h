@@ -9,19 +9,21 @@
 #import <UIKit/UIKit.h>
 
 
-@interface IHRootViewController : UIViewController <UIScrollViewDelegate,UITextViewDelegate>{
+@interface IHRootViewController : UIViewController <UIScrollViewDelegate,UITextViewDelegate,UIGestureRecognizerDelegate>{
     CGRect fullScreen;
-    NSDictionary *getDataDic;
+    NSDictionary *jsonDataAll;
     NSDictionary *itemsDic;
     UIActivityIndicatorView *indicatorView;
     NSDictionary *jsonDic;
+    
+    NSData * imgData;
     int itemNums;
 }
 
 @property (retain, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) UIPageControl *pageControl;
-@property (strong, nonatomic) UITextView *textView;
-@property (strong, nonatomic) UIImageView *imgView;
+//@property (strong, nonatomic) UITextView *textView;
+//@property (strong, nonatomic) UIImageView *imgView;
 
 -(void)updateUI:(int)dataCount;
 

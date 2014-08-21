@@ -153,7 +153,7 @@
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickImgView:)];
         [imgView addGestureRecognizer:tapRecognizer];
         
-       // [imgView setTag:i];
+        [imgView setTag:i];
         
         
         

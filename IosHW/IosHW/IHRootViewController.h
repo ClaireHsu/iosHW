@@ -15,12 +15,16 @@
     NSDictionary *itemsDic;
     UIActivityIndicatorView *indicatorView;
     NSDictionary *jsonDic;
+    NSMutableArray *imgPaths;
+    int largeTag;
+    
     
     NSData * imgData;
     int itemNums;
 }
 
 @property (retain, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (retain, nonatomic) UIImageView *largeImgView;
 @property (strong, nonatomic) UIPageControl *pageControl;
 //@property (strong, nonatomic) UITextView *textView;
 //@property (strong, nonatomic) UIImageView *imgView;

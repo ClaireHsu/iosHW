@@ -8,7 +8,6 @@
 
 #import "IHRootViewController.h"
 
-
 #define JSON_URL @"http://www.indexbricks.com/data/get_update.php?function_code=Intro&store=livebricks&version=0&language=TW"
 
 @interface IHRootViewController ()
@@ -44,6 +43,9 @@
     self.scrollView.showsHorizontalScrollIndicator = NO;
     [self.scrollView setPagingEnabled:YES];
     
+    
+    NSLog(@"W:%f--H:%f",fullScreen.size.width,fullScreen.size.height);
+    
 
     indicatorView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     indicatorView.center = self.scrollView.center;
@@ -58,11 +60,13 @@
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         jsonDataAll = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         
-        dispatch_async(dispatch_get_main_queue(),^{
-            [self updateUI:[jsonDataAll count]];
-            
-        });
         
+            [self updateUI:[jsonDataAll count]];
+            for (UIView *view in self.scrollView.subviews) {
+                NSLog(@"view tag %d, class %@", view.tag, [view class]);
+            }
+         
+        //dispatch_async
         
     }];
     
@@ -96,6 +100,8 @@
     self.pageControl.currentPageIndicatorTintColor = [UIColor redColor];
     [self.view addSubview:self.pageControl];
     
+    imgPaths = [[NSMutableArray alloc]init];
+    
     int imgViewHeight = 200;
     for (int i =0; i<itemNums; i++) {
         itemsDic = [itemsArr objectAtIndex:i];
@@ -106,6 +112,7 @@
         
         
         NSString *imgUrlStr = [itemsDic objectForKey:@"image_url"];
+        
         
         //Set default img
         imgView.image = [UIImage imageNamed:@"asset@2x.png"];
@@ -118,39 +125,35 @@
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         NSString *cachesDirectory = [paths objectAtIndex:0];
         NSString *imgFilePath = [itemsDic objectForKey:@"image_filepath"];
-        NSString *catheImgPath = [cachesDirectory stringByAppendingPathComponent:imgFilePath];
+        NSString *cacheImgPath = [cachesDirectory stringByAppendingPathComponent:imgFilePath];
+        [imgPaths addObject:cacheImgPath];
         
-        if (![[NSFileManager defaultManager]fileExistsAtPath:catheImgPath]) {
+        if (![[NSFileManager defaultManager]fileExistsAtPath:cacheImgPath]) {
             
             //Download img file __Async
             
-            [self downloadImgFromURL:[NSURL URLWithString:imgUrlStr] cacheImgPath:catheImgPath compeledBlock:^(BOOL successed, UIImage *image) {
+            [self downloadImgFromURL:[NSURL URLWithString:imgUrlStr] cacheImgPath:cacheImgPath compeledBlock:^(BOOL successed, UIImage *image) {
                 if (successed) {
                     NSLog(@"img_NO.%d",i);
-                    
-                    dispatch_async(dispatch_get_main_queue(),^{
-                        
-                        imgView.image = image;
-                        
-                    });
+                  
+                    imgView.image = image;
                    
-                    
                 }
             }];
             
         }else{
             
-            imgData = [NSData dataWithContentsOfFile:catheImgPath];
+            imgData = [NSData dataWithContentsOfFile:cacheImgPath];
             imgView.image = [UIImage imageWithData:imgData];
             
         }
         
   
-        
+        imgView.userInteractionEnabled = YES;
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickImgView:)];
         [imgView addGestureRecognizer:tapRecognizer];
         
-        
+       // [imgView setTag:i];
         
         
         
@@ -180,11 +183,9 @@
                                if (!connectionError) {
                                    imgData = [NSData dataWithContentsOfURL:url];
                                    [imgData writeToFile:cacheImgPath atomically:YES];
-                                   
-                                   
-                                       
-                                       UIImage *img = [[UIImage alloc]initWithData:imgData];
-                                       compeledBlock(YES,img);
+                                 
+                                    UIImage *img = [[UIImage alloc]initWithData:imgData];
+                                    compeledBlock(YES,img);
                                    
                         
                                    
@@ -195,11 +196,40 @@
 
 }
 
-#pragma mark - Gresure methods
+#pragma mark - Gresure delegate
 -(void)clickImgView:(UITapGestureRecognizer *)gesture{
-    NSLog(@"img clicked!");
+    UIImageView *clickedImgView = (UIImageView *)gesture.view;;
+    largeTag = [clickedImgView tag];
+    NSLog(@"img clicked:(%d)--URL:%@",largeTag,[imgPaths objectAtIndex:[clickedImgView tag]]);
+    
+    self.largeImgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, fullScreen.size.width, fullScreen.size.height)];
+    self.largeImgView.image = [UIImage imageWithData:[NSData dataWithContentsOfFile:[imgPaths objectAtIndex:[clickedImgView tag]]]];
+    self.largeImgView.contentMode = UIViewContentModeScaleAspectFit;
+    self.largeImgView.backgroundColor = [UIColor blackColor];
+    [self.largeImgView setTag:largeTag];
+    [self.view addSubview:self.largeImgView];
+    
+    // Close Button
+    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    closeButton.frame = CGRectMake(10, 10, 60.0, 30.0);
+    [closeButton setTitle:@"Close" forState:UIControlStateNormal];
+    [closeButton addTarget:self action:@selector(closeButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:closeButton];
+    
+    
 }
 
+-(void)closeButtonClicked:(id)sender{
+    [sender removeFromSuperview];
+    for (UIView *view in self.view.subviews) {
+        NSLog(@"class %@, tag %d", [view class], [view tag]);
+    }
+//    UIView *viewToRemove = [self.view viewWithTag:largeTag];
+//    NSLog(@"view %@", viewToRemove);
+//    viewToRemove.hidden =YES;
+    [self.largeImgView removeFromSuperview];
+    
+}
 
 
 

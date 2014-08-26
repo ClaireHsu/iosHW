@@ -8,6 +8,7 @@
 
 #import "IHRootViewController.h"
 
+
 #define JSON_URL @"http://www.indexbricks.com/data/get_update.php?function_code=Intro&store=livebricks&version=0&language=TW"
 
 @interface IHRootViewController ()
@@ -42,6 +43,7 @@
     self.scrollView.delegate = self;
     self.scrollView.showsHorizontalScrollIndicator = NO;
     [self.scrollView setPagingEnabled:YES];
+    
     
     
     NSLog(@"W:%f--H:%f",fullScreen.size.width,fullScreen.size.height);

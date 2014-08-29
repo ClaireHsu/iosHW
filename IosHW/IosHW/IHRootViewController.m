@@ -198,7 +198,7 @@
 
 }
 
-#pragma mark - Gresure delegate
+#pragma mark - Gesture delegate
 -(void)clickImgView:(UITapGestureRecognizer *)gesture{
     UIImageView *clickedImgView = (UIImageView *)gesture.view;;
     largeTag = [clickedImgView tag];

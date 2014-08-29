@@ -24,7 +24,6 @@
 		3B84F8DE19A33BA100292428 /* shareMail01_01@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B84F8DD19A33BA100292428 /* shareMail01_01@2x.png */; };
 		3BD09277199B772300AD7C17 /* asset@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BD09276199B772300AD7C17 /* asset@2x.png */; };
 		3BD0927A199C5CF900AD7C17 /* IHDataOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BD09279199C5CF900AD7C17 /* IHDataOperator.m */; };
-		3BDB04F3199E047200DC60B4 /* IHLargeImgViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BDB04F1199E047200DC60B4 /* IHLargeImgViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,7 +60,6 @@
 		3BD09276199B772300AD7C17 /* asset@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "asset@2x.png"; sourceTree = "<group>"; };
 		3BD09278199C5CF900AD7C17 /* IHDataOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IHDataOperator.h; sourceTree = "<group>"; };
 		3BD09279199C5CF900AD7C17 /* IHDataOperator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IHDataOperator.m; sourceTree = "<group>"; };
-		3BDB04F1199E047200DC60B4 /* IHLargeImgViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IHLargeImgViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,7 +122,6 @@
 				3B34D220199B710C00968C3F /* IHRootViewController.h */,
 				3B34D221199B710C00968C3F /* IHRootViewController.m */,
 				3B34D222199B710C00968C3F /* IHRootViewController.xib */,
-				3BDB04F1199E047200DC60B4 /* IHLargeImgViewController.xib */,
 				3B34D200199B70EC00968C3F /* IHAppDelegate.h */,
 				3B34D201199B70EC00968C3F /* IHAppDelegate.m */,
 				3BD09278199C5CF900AD7C17 /* IHDataOperator.h */,
@@ -253,7 +250,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3BDB04F3199E047200DC60B4 /* IHLargeImgViewController.xib in Resources */,
 				3B34D224199B710C00968C3F /* IHRootViewController.xib in Resources */,
 				3BD09277199B772300AD7C17 /* asset@2x.png in Resources */,
 				3B84F8DE19A33BA100292428 /* shareMail01_01@2x.png in Resources */,
